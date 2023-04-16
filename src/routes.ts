@@ -23,7 +23,6 @@ export class AuthRouter {
       // authRole.checkRole(ACCOUNT_ROLES_TYPE.User),
       authRole.isUser,
       (req, res) => {
-        console.log({ adu: req.cookies })
         return res.json({ success: true })
       }
     )

@@ -1,6 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import createError from 'http-errors'
-import catchAsync from '../middlewares/catchAsync'
 import { JwtService } from '../services/jwt.service'
 
 import { getModel } from '../models'
@@ -8,12 +7,6 @@ import { type IUser } from '@hellocacbantre/db-schemas'
 import { ACCOUNT_ROLES_TYPE } from '@hellocacbantre/db-schemas'
 import Bluebird from 'bluebird'
 import { falcol } from '../connections/redisio.db'
-
-// const _checkStatusActive = (user: IUser, next: NextFunction) => {
-//   if (user.status !== 'active') {
-//     return next(createError.Forbidden('Your account has not been activated'))
-//   }
-// }
 
 class AuthRole {
   constructor(private readonly jwtService: JwtService = new JwtService()) {}
@@ -56,7 +49,7 @@ class AuthRole {
   }
 
   checkRole = (role: ACCOUNT_ROLES_TYPE) => {
-    return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
       const { authorization } = req.headers
       if (authorization) {
         const token = authorization.split(' ')[1]
@@ -81,10 +74,10 @@ class AuthRole {
         return next()
       }
       return next(createError.Unauthorized())
-    })
+    }
   }
 
-  isUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  isUser = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers
     if (authorization) {
       const token = authorization.split(' ')[1]
@@ -110,9 +103,9 @@ class AuthRole {
       }
     }
     return next(createError.Unauthorized())
-  })
+  }
 
-  isUserActive = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  isUserActive = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers
     if (authorization) {
       const token = authorization.split(' ')[1]
@@ -129,9 +122,9 @@ class AuthRole {
       return next()
     }
     return next(createError.Unauthorized())
-  })
+  }
 
-  isAdmin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  isAdmin = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers
     if (authorization) {
       const token = authorization.split(' ')[1]
@@ -158,9 +151,9 @@ class AuthRole {
       return next()
     }
     return next(createError.Unauthorized())
-  })
+  }
 
-  isSuperAdmin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  isSuperAdmin = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers
     if (authorization) {
       const token = authorization.split(' ')[1]
@@ -187,7 +180,7 @@ class AuthRole {
       return next()
     }
     return next(createError.Unauthorized())
-  })
+  }
 }
 
 export default AuthRole

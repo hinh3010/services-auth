@@ -20,12 +20,7 @@ export const Env = {
     }
   },
   REDIS_CONNECTION: {
-    URI: process.env.REDIS_URI ?? '',
-    HOST: process.env.REDIS_HOST ?? 'localhost',
-    PORT: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
-    PASSWORD: process.env.REDIS_PASSWORD,
-    USERNAME: process.env.REDIS_USERNAME,
-    OPTIONS: {}
+    URI: process.env.REDIS_URI ?? ''
   },
   SESSTION_SECRET: process.env.SESSTION_SECRET ?? 'hellocacbantre',
   JWT: {
