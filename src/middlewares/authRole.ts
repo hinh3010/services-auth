@@ -29,8 +29,8 @@ class AuthRole {
       ])
 
       // add redis
-      void falcol.set(`refreshToken:${_id}`, newRefreshToken as string)
-      void falcol.expire(`refreshToken:${_id}`, 2592000)
+      void falcol.set(`auth:refreshToken:${_id}`, newRefreshToken as string)
+      void falcol.expire(`auth:refreshToken:${_id}`, 2592000)
 
       // add header
       res.set('Authorization', `Bearer ${newToken}`)

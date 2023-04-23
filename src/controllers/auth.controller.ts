@@ -14,8 +14,8 @@ export class AuthController {
     const { newUser, refreshToken, token } = await this.authAction.signUp()(req.body)
 
     // add redis
-    void falcol.set(`refreshToken:${newUser._id}`, refreshToken as string)
-    void falcol.expire(`refreshToken:${newUser._id}`, 2592000)
+    void falcol.set(`auth:refreshToken:${newUser._id}`, refreshToken as string)
+    void falcol.expire(`auth:refreshToken:${newUser._id}`, 2592000)
 
     res.set('Authorization', `Bearer ${token}`)
 
@@ -38,8 +38,8 @@ export class AuthController {
     const { user, refreshToken, token } = await this.authAction.signIn()(req.body)
 
     // add redis
-    void falcol.set(`refreshToken:${user._id}`, refreshToken as string)
-    void falcol.expire(`refreshToken:${user._id}`, 2592000)
+    void falcol.set(`auth:refreshToken:${user._id}`, refreshToken as string)
+    void falcol.expire(`auth:refreshToken:${user._id}`, 2592000)
 
     res.set('Authorization', `Bearer ${token}`)
 

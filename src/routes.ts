@@ -1,15 +1,23 @@
+import { platformDb } from './connections/mongo.db'
+import { type IContext } from './@types/interfaces'
 import { Router } from 'express'
 import { AuthController } from './controllers/auth.controller'
-import AuthRole from './middlewares/authRole'
-// import { ACCOUNT_ROLES_TYPE } from '@hellocacbantre/db-schemas'
+import { AuthRole } from '@hellocacbantre/auth-role'
+import { RedisIoClient } from './connections/redisio.db'
 
 export class AuthRouter {
   public router: Router
+  readonly context: IContext = {
+    mongodb: platformDb,
+    redisDb: RedisIoClient
+  }
 
-  constructor(
-    private readonly authCtl: AuthController = new AuthController(),
-    private readonly authRole: AuthRole = new AuthRole()
-  ) {
+  private readonly authCtl: AuthController
+  private readonly authRole: AuthRole
+
+  constructor() {
+    this.authCtl = new AuthController()
+    this.authRole = new AuthRole(this.context)
     this.router = Router()
     this.routes()
   }
