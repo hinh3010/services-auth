@@ -15,6 +15,7 @@ import xss from 'xss-clean'
 import { Env } from './config'
 import { RedisIoClient } from './connections/redisio.db'
 import { restResponseTimeHistogram } from './utils/metrics'
+import { type Client } from 'connect-redis'
 
 const RedisStore = connectRedis(session)
 async function connectDb(): Promise<void> {
@@ -85,7 +86,7 @@ export async function serverLoader(app: express.Application): Promise<void> {
       secret: Env.SESSTION_SECRET,
       resave: false, // xác định liệu session có được lưu trữ lại trong cơ sở dữ liệu mỗi khi có yêu cầu hay không
       saveUninitialized: true, // true/false, xác định liệu session có được lưu trữ khi chưa có dữ liệu được lưu trữ trong session hay không
-      store: new RedisStore({ client: RedisIoClient }),
+      store: new RedisStore({ client: RedisIoClient as unknown as Client }),
       cookie: {
         secure: Env.NODE_ENV === 'production', // Determines whether cookies are sent over HTTPS
         httpOnly: true,

@@ -18,6 +18,7 @@
     "url2": "git@gitlab.com:hellocacbantre/actions/auth.git"
   },
   "scripts": {
+    "build": "rm -rf dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node dist/server.js",
     "dev": "SET NODE_ENV=dev tsc && concurrently \"tsc -w\" \"nodemon dist/server.js\"",
