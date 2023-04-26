@@ -7,6 +7,7 @@ import { RedisIoClient } from './connections/redisio.db'
 
 export class AuthRouter {
   public router: Router
+
   readonly context: IContext = {
     mongodb: platformDb,
     redisDb: RedisIoClient
@@ -16,7 +17,7 @@ export class AuthRouter {
   private readonly authRole: AuthRole
 
   constructor() {
-    this.authCtl = new AuthController()
+    this.authCtl = new AuthController(this.context)
     this.authRole = new AuthRole(this.context)
     this.router = Router()
     this.routes()

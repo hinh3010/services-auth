@@ -1,23 +1,29 @@
 import Bluebird from 'bluebird'
 import createError from 'http-errors'
 import { generateCode } from '../helpers'
-import { JwtService } from '../services/jwt.service'
+import { createConnect, type IUser } from '@hellocacbantre/db-schemas'
+import { type IContext } from '../@types'
+import { JwtService } from '@hellocacbantre/auth-role'
 
-import { getModel } from '../models'
-import { type IUser } from '@hellocacbantre/db-schemas'
-
-const generateReferralCode = async (): Promise<string> => {
+const generateReferralCode = (context: IContext) => {
+  const { getModel } = createConnect(context.mongodb)
   const User = getModel<IUser>('User')
-  const referralCode = generateCode()
-  const isReferralCode = await User.exists({ referralCode })
-  if (isReferralCode) return generateReferralCode()
-  else return referralCode
+  return async (): Promise<string> => {
+    const referralCode = generateCode()
+    const isReferralCode = await User.exists({ referralCode })
+    if (isReferralCode) return generateReferralCode(context)()
+    else return referralCode
+  }
 }
 
 export class AuthAction {
-  constructor(private readonly jwtService: JwtService = new JwtService()) {}
+  private readonly jwtService: JwtService
+  constructor(context: IContext) {
+    this.jwtService = new JwtService(context)
+  }
 
-  signUp() {
+  signUp(context: IContext) {
+    const { getModel } = createConnect(context.mongodb)
     const User = getModel<IUser>('User')
 
     return async (payload: IUser) => {
@@ -28,7 +34,7 @@ export class AuthAction {
       if (isConflict) throw createError.Conflict(`${email} is already`)
 
       // generate referral code
-      const referralCode = await generateReferralCode()
+      const referralCode = await generateReferralCode(context)()
 
       const data = {
         firstName,
@@ -58,7 +64,8 @@ export class AuthAction {
     }
   }
 
-  signIn() {
+  signIn(context: IContext) {
+    const { getModel } = createConnect(context.mongodb)
     const User = getModel<IUser>('User')
 
     return async (payload: IUser) => {

@@ -16,6 +16,7 @@ import { Env } from './config'
 import { RedisIoClient } from './connections/redisio.db'
 import { restResponseTimeHistogram } from './utils/metrics'
 import { type Client } from 'connect-redis'
+import { SimpleFalcon } from '@hellocacbantre/redis'
 
 const RedisStore = connectRedis(session)
 async function connectDb(): Promise<void> {
@@ -81,9 +82,11 @@ export async function serverLoader(app: express.Application): Promise<void> {
   app.use(cookieParser())
 
   // session
+  const falcol = new SimpleFalcon(RedisIoClient)
+
   app.use(
     session({
-      secret: Env.SESSTION_SECRET,
+      secret: (await falcol.get('global_setting:session_secret')) ?? 'hellocacbantre',
       resave: false, // xác định liệu session có được lưu trữ lại trong cơ sở dữ liệu mỗi khi có yêu cầu hay không
       saveUninitialized: true, // true/false, xác định liệu session có được lưu trữ khi chưa có dữ liệu được lưu trữ trong session hay không
       store: new RedisStore({ client: RedisIoClient as unknown as Client }),

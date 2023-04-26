@@ -21,12 +21,5 @@ export const Env = {
   },
   REDIS_CONNECTION: {
     URI: process.env.REDIS_URI ?? ''
-  },
-  SESSTION_SECRET: process.env.SESSTION_SECRET ?? 'hellocacbantre',
-  JWT: {
-    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ?? 'HelloCacBanTre',
-    ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES ?? '7d',
-    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET ?? 'BatNgoChuaBaGia',
-    REFRESH_TOKEN_EXPIRES: process.env.REFRESH_TOKEN_EXPIRES ?? '30d'
   }
 }
