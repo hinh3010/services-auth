@@ -5,6 +5,8 @@ import Logger from './@loggers'
 import { type IError } from './@types'
 import { Env } from './config'
 import { serverLoader } from './server.loader'
+import { type IContext } from '@hellocacbantre/context'
+
 // import { startMetricsServer } from './utils/metrics'
 // import swaggerDocs from './utils/swagger'
 
@@ -17,6 +19,16 @@ const handlerError = (err: IError, _: Request, res: Response, __: any) => {
 
 class Server {
   public app: express.Application = express()
+
+  readonly context: IContext = {
+    mongoDb: {
+      uri: Env.MONGO_CONNECTION.URI,
+      options: Env.MONGO_CONNECTION.OPTIONS
+    },
+    redisDb: {
+      uri: Env.REDIS_CONNECTION.URI
+    }
+  }
 
   constructor() {
     void serverLoader(this.app)
@@ -35,7 +47,7 @@ class Server {
   }
 
   routes(): Router {
-    return new AuthRouter().router
+    return new AuthRouter(this.context).router
   }
 
   public listen(port: number): void {

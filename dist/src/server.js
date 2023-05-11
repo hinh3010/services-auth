@@ -21,6 +21,15 @@ const handlerError = (err, _, res, __) => {
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
+        this.context = {
+            mongoDb: {
+                uri: config_1.Env.MONGO_CONNECTION.URI,
+                options: config_1.Env.MONGO_CONNECTION.OPTIONS
+            },
+            redisDb: {
+                uri: config_1.Env.REDIS_CONNECTION.URI
+            }
+        };
         void (0, server_loader_1.serverLoader)(this.app);
         this.app.use(`/${config_1.Env.SERVICE_NAME}`, this.routes());
         this.app.get('/*', (_, res) => {
@@ -32,7 +41,7 @@ class Server {
         this.listen(Number(config_1.Env.PORT));
     }
     routes() {
-        return new routes_1.AuthRouter().router;
+        return new routes_1.AuthRouter(this.context).router;
     }
     listen(port) {
         this.app.listen(port, () => {

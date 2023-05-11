@@ -4,21 +4,12 @@ exports.AuthRouter = void 0;
 const auth_role_1 = require("@hellocacbantre/auth-role");
 const db_schemas_1 = require("@hellocacbantre/db-schemas");
 const express_1 = require("express");
-const config_1 = require("./config");
 const auth_controller_1 = require("./controllers/auth.controller");
 class AuthRouter {
-    constructor() {
-        this.context = {
-            mongoDb: {
-                uri: config_1.Env.MONGO_CONNECTION.URI,
-                options: config_1.Env.MONGO_CONNECTION.OPTIONS
-            },
-            redisDb: {
-                uri: config_1.Env.REDIS_CONNECTION.URI
-            }
-        };
-        this.authCtl = new auth_controller_1.AuthController(this.context);
-        this.authRole = new auth_role_1.AuthRole(this.context);
+    constructor(context) {
+        this.context = context;
+        this.authCtl = new auth_controller_1.AuthController(context);
+        this.authRole = new auth_role_1.AuthRole(context);
         this.router = (0, express_1.Router)();
         this.routes();
     }

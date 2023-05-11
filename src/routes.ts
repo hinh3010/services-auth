@@ -1,29 +1,20 @@
 import { AuthRole } from '@hellocacbantre/auth-role'
 import { ACCOUNT_ROLES_TYPE } from '@hellocacbantre/db-schemas'
 import { Router } from 'express'
-import { Env } from './config'
 import { AuthController } from './controllers/auth.controller'
 import { type IContext } from '@hellocacbantre/context'
 
 export class AuthRouter {
   public router: Router
-
-  readonly context: IContext = {
-    mongoDb: {
-      uri: Env.MONGO_CONNECTION.URI,
-      options: Env.MONGO_CONNECTION.OPTIONS
-    },
-    redisDb: {
-      uri: Env.REDIS_CONNECTION.URI
-    }
-  }
+  private readonly context: IContext
 
   private readonly authCtl: AuthController
   private readonly authRole: AuthRole
 
-  constructor() {
-    this.authCtl = new AuthController(this.context)
-    this.authRole = new AuthRole(this.context)
+  constructor(context: IContext) {
+    this.context = context
+    this.authCtl = new AuthController(context)
+    this.authRole = new AuthRole(context)
     this.router = Router()
     this.routes()
   }
