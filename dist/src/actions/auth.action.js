@@ -13,13 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthAction = void 0;
+const auth_role_1 = require("@hellocacbantre/auth-role");
 const bluebird_1 = __importDefault(require("bluebird"));
 const http_errors_1 = __importDefault(require("http-errors"));
+const mongo_db_1 = require("../connections/mongo.db");
 const helpers_1 = require("../helpers");
-const db_schemas_1 = require("@hellocacbantre/db-schemas");
-const auth_role_1 = require("@hellocacbantre/auth-role");
 const generateReferralCode = (context) => {
-    const { getModel } = (0, db_schemas_1.createConnect)(context.mongodb);
+    const { getModel } = (0, mongo_db_1.getStoreDb)(context);
     const User = getModel('User');
     return () => __awaiter(void 0, void 0, void 0, function* () {
         const referralCode = (0, helpers_1.generateCode)();
@@ -35,19 +35,19 @@ class AuthAction {
         this.jwtService = new auth_role_1.JwtService(context);
     }
     signUp(context) {
-        const { getModel } = (0, db_schemas_1.createConnect)(context.mongodb);
+        const { getModel } = (0, mongo_db_1.getStoreDb)(context);
         const User = getModel('User');
         return (payload) => __awaiter(this, void 0, void 0, function* () {
-            const { email, password, firstName, lastName, inviteCode } = payload;
-            const isConflict = yield User.exists({ email });
+            const { account, password, firstName, lastName, inviteCode } = payload;
+            const isConflict = yield User.exists({ email: account });
             if (isConflict)
-                throw http_errors_1.default.Conflict(`${email} is already`);
+                throw http_errors_1.default.Conflict(`${account} is already`);
             // generate referral code
             const referralCode = yield generateReferralCode(context)();
             const data = {
                 firstName,
                 lastName,
-                email,
+                email: account,
                 password,
                 referralCode,
                 inviteCode: ''
@@ -60,21 +60,18 @@ class AuthAction {
             yield newUser.save();
             const { _id } = newUser;
             // generate token
-            const [token, refreshToken] = yield bluebird_1.default.all([
-                this.jwtService.generateAccessToken({ _id }),
-                this.jwtService.generateRefreshToken({ _id })
-            ]);
+            const [token, refreshToken] = yield bluebird_1.default.all([this.jwtService.generateAccessToken({ _id }), this.jwtService.generateRefreshToken({ _id })]);
             return { token, refreshToken, newUser };
         });
     }
     signIn(context) {
-        const { getModel } = (0, db_schemas_1.createConnect)(context.mongodb);
+        const { getModel } = (0, mongo_db_1.getStoreDb)(context);
         const User = getModel('User');
         return (payload) => __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = payload;
-            const user = yield User.findOne({ email });
+            const { account, password } = payload;
+            const user = yield User.findOne({ email: account });
             if (!user)
-                throw http_errors_1.default.UnprocessableEntity(`${email} invalid`);
+                throw http_errors_1.default.UnprocessableEntity(`${account} invalid`);
             const { status, _id } = user;
             if (status === 'banned')
                 throw http_errors_1.default.Forbidden('Account banned');
@@ -82,10 +79,7 @@ class AuthAction {
             if (!isCorrectPassword)
                 throw http_errors_1.default.Unauthorized('password invalid');
             // generate token
-            const [token, refreshToken] = yield bluebird_1.default.all([
-                this.jwtService.generateAccessToken({ _id }),
-                this.jwtService.generateRefreshToken({ _id })
-            ]);
+            const [token, refreshToken] = yield bluebird_1.default.all([this.jwtService.generateAccessToken({ _id }), this.jwtService.generateRefreshToken({ _id })]);
             return { token, refreshToken, user };
         });
     }

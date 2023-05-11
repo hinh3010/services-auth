@@ -1,8 +1,8 @@
-import { SimpleFalcon } from '@hellocacbantre/redis'
-import { type IContext } from '../@types'
+import { type IContext } from '@hellocacbantre/context'
+import { getFalcol } from '../connections/redisio.db'
 
 export const getGlobalSetting = (context: IContext) => {
-  const falcol = new SimpleFalcon(context.redisDb)
+  const falcol = getFalcol(context)
   return async (key: string): Promise<string> => {
     return (await falcol.get(`global_setting:${key}`)) ?? ''
   }

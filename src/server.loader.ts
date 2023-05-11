@@ -13,7 +13,7 @@ import path from 'path'
 import responseTime from 'response-time'
 import xss from 'xss-clean'
 import { Env } from './config'
-import { RedisIoClient } from './connections/redisio.db'
+import { getRedisIoClient } from './connections/redisio.db'
 import { restResponseTimeHistogram } from './utils/metrics'
 import { type Client } from 'connect-redis'
 import { SimpleFalcon } from '@hellocacbantre/redis'
@@ -82,14 +82,15 @@ export async function serverLoader(app: express.Application): Promise<void> {
   app.use(cookieParser())
 
   // session
-  const falcol = new SimpleFalcon(RedisIoClient)
+  const redisClient = getRedisIoClient(Env.REDIS_CONNECTION.URI)
+  const falcol = new SimpleFalcon(redisClient)
 
   app.use(
     session({
       secret: (await falcol.get('global_setting:session_secret')) ?? 'hellocacbantre',
       resave: false, // xác định liệu session có được lưu trữ lại trong cơ sở dữ liệu mỗi khi có yêu cầu hay không
       saveUninitialized: true, // true/false, xác định liệu session có được lưu trữ khi chưa có dữ liệu được lưu trữ trong session hay không
-      store: new RedisStore({ client: RedisIoClient as unknown as Client }),
+      store: new RedisStore({ client: redisClient as unknown as Client }),
       cookie: {
         secure: Env.NODE_ENV === 'production', // Determines whether cookies are sent over HTTPS
         httpOnly: true,

@@ -1,16 +1,21 @@
-import { platformDb } from './connections/mongo.db'
-import { type IContext } from './@types/interfaces'
-import { Router } from 'express'
-import { AuthController } from './controllers/auth.controller'
 import { AuthRole } from '@hellocacbantre/auth-role'
-import { RedisIoClient } from './connections/redisio.db'
+import { ACCOUNT_ROLES_TYPE } from '@hellocacbantre/db-schemas'
+import { Router } from 'express'
+import { Env } from './config'
+import { AuthController } from './controllers/auth.controller'
+import { type IContext } from '@hellocacbantre/context'
 
 export class AuthRouter {
   public router: Router
 
   readonly context: IContext = {
-    mongodb: platformDb,
-    redisDb: RedisIoClient
+    mongoDb: {
+      uri: Env.MONGO_CONNECTION.URI,
+      options: Env.MONGO_CONNECTION.OPTIONS
+    },
+    redisDb: {
+      uri: Env.REDIS_CONNECTION.URI
+    }
   }
 
   private readonly authCtl: AuthController
@@ -28,12 +33,9 @@ export class AuthRouter {
 
     this.router.route('/sign-in').post(authCtl.signIn)
     this.router.route('/sign-up').post(authCtl.signUp)
-    this.router.route('/test').get(
-      // authRole.checkRole(ACCOUNT_ROLES_TYPE.User),
-      authRole.isUser,
-      (req, res) => {
-        return res.json({ success: true })
-      }
-    )
+    this.router.route('/userinfo-by-token').get(authRole.isUser, authCtl.userinfo)
+    this.router.route('/test').get(authRole.checkRole(ACCOUNT_ROLES_TYPE.User), (req, res) => {
+      return res.json({ success: true })
+    })
   }
 }

@@ -23,19 +23,19 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
+import { type IContext } from '@hellocacbantre/context';
 import { type IUser } from '@hellocacbantre/db-schemas';
-import { type IContext } from '../@types';
 export declare class AuthAction {
     private readonly jwtService;
     constructor(context: IContext);
-    signUp(context: IContext): (payload: IUser) => Promise<{
+    signUp(context: IContext): (payload: any) => Promise<{
         token: unknown;
         refreshToken: unknown;
         newUser: import("mongoose").Document<unknown, {}, IUser> & Omit<IUser & {
             _id: import("mongoose").Types.ObjectId;
         }, never>;
     }>;
-    signIn(context: IContext): (payload: IUser) => Promise<{
+    signIn(context: IContext): (payload: any) => Promise<{
         token: unknown;
         refreshToken: unknown;
         user: import("mongoose").Document<unknown, {}, IUser> & Omit<IUser & {

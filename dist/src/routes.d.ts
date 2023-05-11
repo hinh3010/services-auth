@@ -1,5 +1,5 @@
-import { type IContext } from './@types/interfaces';
 import { Router } from 'express';
+import { type IContext } from '@hellocacbantre/context';
 export declare class AuthRouter {
     router: Router;
     readonly context: IContext;

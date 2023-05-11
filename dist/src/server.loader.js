@@ -103,12 +103,13 @@ function serverLoader(app) {
         // cookies
         app.use((0, cookie_parser_1.default)());
         // session
-        const falcol = new redis_1.SimpleFalcon(redisio_db_1.RedisIoClient);
+        const redisClient = (0, redisio_db_1.getRedisIoClient)(config_1.Env.REDIS_CONNECTION.URI);
+        const falcol = new redis_1.SimpleFalcon(redisClient);
         app.use((0, express_session_1.default)({
             secret: (_a = (yield falcol.get('global_setting:session_secret'))) !== null && _a !== void 0 ? _a : 'hellocacbantre',
             resave: false,
             saveUninitialized: true,
-            store: new RedisStore({ client: redisio_db_1.RedisIoClient }),
+            store: new RedisStore({ client: redisClient }),
             cookie: {
                 secure: config_1.Env.NODE_ENV === 'production',
                 httpOnly: true,

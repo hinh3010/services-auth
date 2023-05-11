@@ -1,12 +1,13 @@
+import { JwtService } from '@hellocacbantre/auth-role'
+import { type IContext } from '@hellocacbantre/context'
+import { type IUser } from '@hellocacbantre/db-schemas'
 import Bluebird from 'bluebird'
 import createError from 'http-errors'
+import { getStoreDb } from '../connections/mongo.db'
 import { generateCode } from '../helpers'
-import { createConnect, type IUser } from '@hellocacbantre/db-schemas'
-import { type IContext } from '../@types'
-import { JwtService } from '@hellocacbantre/auth-role'
 
 const generateReferralCode = (context: IContext) => {
-  const { getModel } = createConnect(context.mongodb)
+  const { getModel } = getStoreDb(context)
   const User = getModel<IUser>('User')
   return async (): Promise<string> => {
     const referralCode = generateCode()
@@ -23,15 +24,15 @@ export class AuthAction {
   }
 
   signUp(context: IContext) {
-    const { getModel } = createConnect(context.mongodb)
+    const { getModel } = getStoreDb(context)
     const User = getModel<IUser>('User')
 
-    return async (payload: IUser) => {
-      const { email, password, firstName, lastName, inviteCode }: IUser = payload
+    return async (payload: any) => {
+      const { account, password, firstName, lastName, inviteCode } = payload
 
-      const isConflict = await User.exists({ email })
+      const isConflict = await User.exists({ email: account })
 
-      if (isConflict) throw createError.Conflict(`${email} is already`)
+      if (isConflict) throw createError.Conflict(`${account} is already`)
 
       // generate referral code
       const referralCode = await generateReferralCode(context)()
@@ -39,7 +40,7 @@ export class AuthAction {
       const data = {
         firstName,
         lastName,
-        email,
+        email: account,
         password,
         referralCode,
         inviteCode: ''
@@ -55,25 +56,22 @@ export class AuthAction {
       const { _id } = newUser
 
       // generate token
-      const [token, refreshToken] = await Bluebird.all([
-        this.jwtService.generateAccessToken({ _id }),
-        this.jwtService.generateRefreshToken({ _id })
-      ])
+      const [token, refreshToken] = await Bluebird.all([this.jwtService.generateAccessToken({ _id }), this.jwtService.generateRefreshToken({ _id })])
 
       return { token, refreshToken, newUser }
     }
   }
 
   signIn(context: IContext) {
-    const { getModel } = createConnect(context.mongodb)
+    const { getModel } = getStoreDb(context)
     const User = getModel<IUser>('User')
 
-    return async (payload: IUser) => {
-      const { email, password }: IUser = payload
+    return async (payload: any) => {
+      const { account, password } = payload
 
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email: account })
 
-      if (!user) throw createError.UnprocessableEntity(`${email} invalid`)
+      if (!user) throw createError.UnprocessableEntity(`${account} invalid`)
 
       const { status, _id } = user
 
@@ -83,10 +81,7 @@ export class AuthAction {
       if (!isCorrectPassword) throw createError.Unauthorized('password invalid')
 
       // generate token
-      const [token, refreshToken] = await Bluebird.all([
-        this.jwtService.generateAccessToken({ _id }),
-        this.jwtService.generateRefreshToken({ _id })
-      ])
+      const [token, refreshToken] = await Bluebird.all([this.jwtService.generateAccessToken({ _id }), this.jwtService.generateRefreshToken({ _id })])
 
       return { token, refreshToken, user }
     }
