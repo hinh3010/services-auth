@@ -1,9 +1,9 @@
 {
-    "name": "@hellocacbantre/auth",
+    "name": "@hellocacbantre/services-auth",
     "version": "1.0.0",
     "description": "",
-    "main": "dist/src/server.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/routers.js",
+    "types": "dist/routers.d.ts",
     "engines": {
         "node": ">=18 <19"
     },

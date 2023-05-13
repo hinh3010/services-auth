@@ -2,8 +2,8 @@
   "name": "@hellocacbantre/services-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/routers.js",
-  "types": "dist/src/routers.d.ts",
+  "main": "dist/routers.js",
+  "types": "dist/routers.d.ts",
   "engines": {
     "node": ">=18 <19"
   },
