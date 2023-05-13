@@ -18,12 +18,12 @@ const config_1 = require("../config");
 const redisio_db_1 = require("../connections/redisio.db");
 const catchAsync_1 = __importDefault(require("../middlewares/catchAsync"));
 const convertToSeconds_1 = require("../utils/convertToSeconds");
-const metrics_1 = require("../utils/metrics");
+// import { databaseResponseTimeHistogram } from '../utils/metrics'
 class AuthController {
     constructor(context) {
         this.signUp = (0, catchAsync_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const timer = metrics_1.databaseResponseTimeHistogram.startTimer();
-            timer({ operation: 'auth_sign_up', success: 'true' });
+            // const timer = databaseResponseTimeHistogram.startTimer()
+            // timer({ operation: 'auth_sign_up', success: 'true' })
             const { newUser, refreshToken, token } = yield this.authAction.signUp(this.context)(req.body);
             const refreshTokenExpiresString = yield (0, config_1.getGlobalSetting)(this.context)('jwt_refresh_token_expires');
             const refreshTokenExpiresSeconds = (0, convertToSeconds_1.convertToSeconds)(refreshTokenExpiresString);
@@ -44,8 +44,8 @@ class AuthController {
             });
         }));
         this.signIn = (0, catchAsync_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const timer = metrics_1.databaseResponseTimeHistogram.startTimer();
-            timer({ operation: 'auth_sign_in', success: 'true' });
+            // const timer = databaseResponseTimeHistogram.startTimer()
+            // timer({ operation: 'auth_sign_in', success: 'true' })
             const { user, refreshToken, token } = yield this.authAction.signIn(this.context)(req.body);
             const refreshTokenExpiresString = yield (0, config_1.getGlobalSetting)(this.context)('jwt_refresh_token_expires');
             const refreshTokenExpiresSeconds = (0, convertToSeconds_1.convertToSeconds)(refreshTokenExpiresString);
@@ -66,8 +66,8 @@ class AuthController {
             });
         }));
         this.userinfo = (0, catchAsync_1.default)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const timer = metrics_1.databaseResponseTimeHistogram.startTimer();
-            timer({ operation: 'auth_userinfo_by_token', success: 'true' });
+            // const timer = databaseResponseTimeHistogram.startTimer()
+            // timer({ operation: 'auth_userinfo_by_token', success: 'true' })
             const userInfo = req.user;
             delete userInfo.password;
             return res.json({

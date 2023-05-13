@@ -8,7 +8,7 @@ import { getGlobalSetting } from '../config'
 import { getFalcol } from '../connections/redisio.db'
 import catchAsync from '../middlewares/catchAsync'
 import { convertToSeconds } from '../utils/convertToSeconds'
-import { databaseResponseTimeHistogram } from '../utils/metrics'
+// import { databaseResponseTimeHistogram } from '../utils/metrics'
 
 export class AuthController {
   private readonly authAction: AuthAction
@@ -22,8 +22,8 @@ export class AuthController {
   }
 
   signUp = catchAsync(async (req: Request, res: Response) => {
-    const timer = databaseResponseTimeHistogram.startTimer()
-    timer({ operation: 'auth_sign_up', success: 'true' })
+    // const timer = databaseResponseTimeHistogram.startTimer()
+    // timer({ operation: 'auth_sign_up', success: 'true' })
 
     const { newUser, refreshToken, token } = await this.authAction.signUp(this.context)(req.body)
 
@@ -51,8 +51,8 @@ export class AuthController {
   })
 
   signIn = catchAsync(async (req: Request, res: Response) => {
-    const timer = databaseResponseTimeHistogram.startTimer()
-    timer({ operation: 'auth_sign_in', success: 'true' })
+    // const timer = databaseResponseTimeHistogram.startTimer()
+    // timer({ operation: 'auth_sign_in', success: 'true' })
 
     const { user, refreshToken, token } = await this.authAction.signIn(this.context)(req.body)
 
@@ -80,8 +80,8 @@ export class AuthController {
   })
 
   userinfo = catchAsync(async (req: Request, res: Response) => {
-    const timer = databaseResponseTimeHistogram.startTimer()
-    timer({ operation: 'auth_userinfo_by_token', success: 'true' })
+    // const timer = databaseResponseTimeHistogram.startTimer()
+    // timer({ operation: 'auth_userinfo_by_token', success: 'true' })
 
     const userInfo: any = req.user as IUser
 
