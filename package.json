@@ -1,5 +1,5 @@
 {
-  "name": "@hellocacbantre/auth",
+  "name": "@hellocacbantre/services-auth",
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/server.js",
