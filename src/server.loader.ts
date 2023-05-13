@@ -1,6 +1,7 @@
+import { SimpleFalcon } from '@hellocacbantre/redis'
 import Bluebird from 'bluebird'
 import compression from 'compression'
-import connectRedis from 'connect-redis'
+import connectRedis, { type Client } from 'connect-redis'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express, { type Request, type Response } from 'express'
@@ -13,10 +14,8 @@ import path from 'path'
 import responseTime from 'response-time'
 import xss from 'xss-clean'
 import { Env } from './config'
-import { getRedisIoClient } from './connections/redisio.db'
+import { redisClient } from './connections/redisio.db'
 import { restResponseTimeHistogram } from './utils/metrics'
-import { type Client } from 'connect-redis'
-import { SimpleFalcon } from '@hellocacbantre/redis'
 
 const RedisStore = connectRedis(session)
 async function connectDb(): Promise<void> {
@@ -82,7 +81,6 @@ export async function serverLoader(app: express.Application): Promise<void> {
   app.use(cookieParser())
 
   // session
-  const redisClient = getRedisIoClient(Env.REDIS_CONNECTION.URI)
   const falcol = new SimpleFalcon(redisClient)
 
   app.use(

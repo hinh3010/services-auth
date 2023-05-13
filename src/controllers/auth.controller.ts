@@ -2,13 +2,13 @@ import { type IContext } from '@hellocacbantre/context'
 import { type IUser } from '@hellocacbantre/db-schemas'
 import { type Request, type Response } from 'express'
 
+import { type SimpleFalcon } from '@hellocacbantre/redis'
 import { AuthAction } from '../actions/auth.action'
 import { getGlobalSetting } from '../config'
 import { getFalcol } from '../connections/redisio.db'
 import catchAsync from '../middlewares/catchAsync'
 import { convertToSeconds } from '../utils/convertToSeconds'
 import { databaseResponseTimeHistogram } from '../utils/metrics'
-import { type SimpleFalcon } from '@hellocacbantre/redis'
 
 export class AuthController {
   private readonly authAction: AuthAction

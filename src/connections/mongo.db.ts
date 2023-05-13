@@ -1,10 +1,15 @@
-import { type IStoreDB, createConnect, newConnection } from '@hellocacbantre/db-schemas'
+import { Env } from './../config/env'
 import { type IContext } from '@hellocacbantre/context'
+import { createConnect, newConnection, type IStoreDB } from '@hellocacbantre/db-schemas'
 
-import { type Connection } from 'mongoose'
+const { URI, OPTIONS } = Env.MONGO_CONNECTION
+
+export const platformDb = newConnection(URI, {
+  ...OPTIONS,
+  dbName: 'platform'
+})
 
 export const getStoreDb = (context: IContext): IStoreDB => {
   const { mongoDb } = context
-  const db: Connection = newConnection(mongoDb.uri, mongoDb.options)
-  return createConnect(db)
+  return createConnect(mongoDb.instance)
 }

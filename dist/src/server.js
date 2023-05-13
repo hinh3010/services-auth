@@ -3,12 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const routes_1 = require("./routes");
+const routers_1 = require("./routers");
 const express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 const _loggers_1 = __importDefault(require("./@loggers"));
 const config_1 = require("./config");
 const server_loader_1 = require("./server.loader");
+const redisio_db_1 = require("./connections/redisio.db");
+const mongo_db_1 = require("./connections/mongo.db");
 // import { startMetricsServer } from './utils/metrics'
 // import swaggerDocs from './utils/swagger'
 const handlerError = (err, _, res, __) => {
@@ -23,11 +25,10 @@ class Server {
         this.app = (0, express_1.default)();
         this.context = {
             mongoDb: {
-                uri: config_1.Env.MONGO_CONNECTION.URI,
-                options: config_1.Env.MONGO_CONNECTION.OPTIONS
+                instance: mongo_db_1.platformDb
             },
             redisDb: {
-                uri: config_1.Env.REDIS_CONNECTION.URI
+                instance: redisio_db_1.redisClient
             }
         };
         void (0, server_loader_1.serverLoader)(this.app);
@@ -41,7 +42,7 @@ class Server {
         this.listen(Number(config_1.Env.PORT));
     }
     routes() {
-        return new routes_1.AuthRouter(this.context).router;
+        return new routers_1.AuthRouter(this.context).getRouter();
     }
     listen(port) {
         this.app.listen(port, () => {

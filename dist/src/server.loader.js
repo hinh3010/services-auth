@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serverLoader = void 0;
+const redis_1 = require("@hellocacbantre/redis");
 const bluebird_1 = __importDefault(require("bluebird"));
 const compression_1 = __importDefault(require("compression"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
@@ -53,7 +54,6 @@ const xss_clean_1 = __importDefault(require("xss-clean"));
 const config_1 = require("./config");
 const redisio_db_1 = require("./connections/redisio.db");
 const metrics_1 = require("./utils/metrics");
-const redis_1 = require("@hellocacbantre/redis");
 const RedisStore = (0, connect_redis_1.default)(express_session_1.default);
 function connectDb() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -103,13 +103,12 @@ function serverLoader(app) {
         // cookies
         app.use((0, cookie_parser_1.default)());
         // session
-        const redisClient = (0, redisio_db_1.getRedisIoClient)(config_1.Env.REDIS_CONNECTION.URI);
-        const falcol = new redis_1.SimpleFalcon(redisClient);
+        const falcol = new redis_1.SimpleFalcon(redisio_db_1.redisClient);
         app.use((0, express_session_1.default)({
             secret: (_a = (yield falcol.get('global_setting:session_secret'))) !== null && _a !== void 0 ? _a : 'hellocacbantre',
             resave: false,
             saveUninitialized: true,
-            store: new RedisStore({ client: redisClient }),
+            store: new RedisStore({ client: redisio_db_1.redisClient }),
             cookie: {
                 secure: config_1.Env.NODE_ENV === 'production',
                 httpOnly: true,

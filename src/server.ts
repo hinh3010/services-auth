@@ -1,4 +1,4 @@
-import { AuthRouter } from './routes'
+import { AuthRouter } from './routers'
 import express, { type Request, type Response, type Router } from 'express'
 import 'reflect-metadata'
 import Logger from './@loggers'
@@ -6,6 +6,8 @@ import { type IError } from './@types'
 import { Env } from './config'
 import { serverLoader } from './server.loader'
 import { type IContext } from '@hellocacbantre/context'
+import { redisClient } from './connections/redisio.db'
+import { platformDb } from './connections/mongo.db'
 
 // import { startMetricsServer } from './utils/metrics'
 // import swaggerDocs from './utils/swagger'
@@ -22,11 +24,10 @@ class Server {
 
   readonly context: IContext = {
     mongoDb: {
-      uri: Env.MONGO_CONNECTION.URI,
-      options: Env.MONGO_CONNECTION.OPTIONS
+      instance: platformDb
     },
     redisDb: {
-      uri: Env.REDIS_CONNECTION.URI
+      instance: redisClient
     }
   }
 
@@ -47,7 +48,7 @@ class Server {
   }
 
   routes(): Router {
-    return new AuthRouter(this.context).router
+    return new AuthRouter(this.context).getRouter()
   }
 
   public listen(port: number): void {

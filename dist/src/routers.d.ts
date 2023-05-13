@@ -1,10 +1,8 @@
-import { Router } from 'express';
 import { type IContext } from '@hellocacbantre/context';
-export declare class AuthRouter {
-    router: Router;
-    private readonly context;
+import { BaseRouter } from './base.router';
+export declare class AuthRouter extends BaseRouter {
     private readonly authCtl;
     private readonly authRole;
     constructor(context: IContext);
-    routes(): void;
+    protected configureRoutes(): void;
 }
