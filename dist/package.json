@@ -61,7 +61,7 @@
         "swagger-ui-express": "^4.1.6",
         "xss-clean": "^0.1.1"
     },
-    "dependencies": {
+    "devDependencies": {
         "@hellocacbantre/auth-role": "hinh3010/actions-auth-role",
         "@hellocacbantre/context": "hinh3010/context",
         "@hellocacbantre/db-schemas": "hinh3010/packages-db-schemas",
@@ -92,9 +92,7 @@
         "response-time": "^2.3.2",
         "swagger-jsdoc": "^6.1.0",
         "swagger-ui-express": "^4.1.6",
-        "xss-clean": "^0.1.1"
-    },
-    "devDependencies": {
+        "xss-clean": "^0.1.1",
         "@types/bluebird": "^3.5.38",
         "@types/compression": "^1.7.2",
         "@types/connect-redis": "^0.0.20",
