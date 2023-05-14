@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const routers_1 = require("./routers");
 const express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 const _loggers_1 = __importDefault(require("./@loggers"));
 const config_1 = require("./config");
-const server_loader_1 = require("./server.loader");
-const redisio_db_1 = require("./connections/redisio.db");
 const mongo_db_1 = require("./connections/mongo.db");
+const redisio_db_1 = require("./connections/redisio.db");
+const routers_1 = require("./routers");
+const server_loader_1 = require("./server.loader");
 // import { startMetricsServer } from './utils/metrics'
 // import swaggerDocs from './utils/swagger'
 const handlerError = (err, _, res, __) => {
@@ -34,16 +34,16 @@ class Server {
         this.app = (0, express_1.default)();
         this.context = {
             mongoDb: {
-                instance: mongo_db_1.platformDb
+                instance: (0, mongo_db_1.connectDb)(config_1.Env.MONGO_CONNECTION.URI, Object.assign(Object.assign({}, config_1.Env.MONGO_CONNECTION.OPTIONS), { dbName: 'platform' }))
             },
             redisDb: {
-                instance: redisio_db_1.redisClient
+                instance: (0, redisio_db_1.getRedisClient)(config_1.Env.REDIS_CONNECTION.URI)
             }
         };
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, server_loader_1.serverLoader)(this.app);
+            yield (0, server_loader_1.serverLoader)(this.context)(this.app);
             this.app.use(`/${config_1.Env.SERVICE_NAME}`, this.routes());
             this.app.get('/*', (_, res) => {
                 res.json({
@@ -66,6 +66,6 @@ class Server {
     }
 }
 void (() => __awaiter(void 0, void 0, void 0, function* () {
-    // const server = new Server()
-    // await server.start()
+    const server = new Server();
+    yield server.start();
 }))();

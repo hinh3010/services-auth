@@ -21,9 +21,9 @@
 /// <reference types="mongoose/types/utility" />
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
-/// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { type IContext } from '@hellocacbantre/context';
 import { type IStoreDB } from '@hellocacbantre/db-schemas';
-export declare const platformDb: import("mongoose").Connection;
+import { type ConnectOptions } from 'mongoose';
+export declare const connectDb: (uri: string, options: ConnectOptions) => import("mongoose").Connection;
 export declare const getStoreDb: (context: IContext) => IStoreDB;

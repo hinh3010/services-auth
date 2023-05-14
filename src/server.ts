@@ -1,13 +1,13 @@
-import { AuthRouter } from './routers'
+import { type IContext } from '@hellocacbantre/context'
 import express, { type Request, type Response, type Router } from 'express'
 import 'reflect-metadata'
 import Logger from './@loggers'
 import { type IError } from './@types'
 import { Env } from './config'
+import { connectDb } from './connections/mongo.db'
+import { getRedisClient } from './connections/redisio.db'
+import { AuthRouter } from './routers'
 import { serverLoader } from './server.loader'
-import { type IContext } from '@hellocacbantre/context'
-import { redisClient } from './connections/redisio.db'
-import { platformDb } from './connections/mongo.db'
 
 // import { startMetricsServer } from './utils/metrics'
 // import swaggerDocs from './utils/swagger'
@@ -24,15 +24,15 @@ class Server {
 
   private readonly context: IContext = {
     mongoDb: {
-      instance: platformDb
+      instance: connectDb(Env.MONGO_CONNECTION.URI, { ...Env.MONGO_CONNECTION.OPTIONS, dbName: 'platform' })
     },
     redisDb: {
-      instance: redisClient
+      instance: getRedisClient(Env.REDIS_CONNECTION.URI)
     }
   }
 
   async start() {
-    await serverLoader(this.app)
+    await serverLoader(this.context)(this.app)
 
     this.app.use(`/${Env.SERVICE_NAME}`, this.routes())
 
@@ -61,6 +61,6 @@ class Server {
 }
 
 void (async () => {
-  // const server = new Server()
-  // await server.start()
+  const server = new Server()
+  await server.start()
 })()
