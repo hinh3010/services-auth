@@ -3,6 +3,7 @@ import { type IContext } from '@hellocacbantre/context'
 import { Env } from '../config'
 
 export const redisClient = createConnect(Env.REDIS_CONNECTION.URI)
+export const getRedisClient = () => createConnect(Env.REDIS_CONNECTION.URI)
 
 export const getFalcol = (context: IContext): SimpleFalcon => {
   const { redisDb } = context

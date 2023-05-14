@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serverLoader = void 0;
 const redis_1 = require("@hellocacbantre/redis");
-const bluebird_1 = __importDefault(require("bluebird"));
 const compression_1 = __importDefault(require("compression"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
@@ -55,11 +31,6 @@ const config_1 = require("./config");
 const redisio_db_1 = require("./connections/redisio.db");
 const metrics_1 = require("./utils/metrics");
 const RedisStore = (0, connect_redis_1.default)(express_session_1.default);
-function connectDb() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield bluebird_1.default.all([Promise.resolve().then(() => __importStar(require('./connections/mongo.db'))), Promise.resolve().then(() => __importStar(require('./connections/redisio.db')))]);
-    });
-}
 function serverLoader(app) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -119,7 +90,6 @@ function serverLoader(app) {
         }));
         // passport
         app.use(passport_1.default.initialize());
-        yield connectDb();
     });
 }
 exports.serverLoader = serverLoader;

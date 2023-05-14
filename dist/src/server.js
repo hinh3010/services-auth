@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,15 +40,19 @@ class Server {
                 instance: redisio_db_1.redisClient
             }
         };
-        void (0, server_loader_1.serverLoader)(this.app);
-        this.app.use(`/${config_1.Env.SERVICE_NAME}`, this.routes());
-        this.app.get('/*', (_, res) => {
-            res.json({
-                message: `welcome ${config_1.Env.SERVICE_NAME} service`
+    }
+    start() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield (0, server_loader_1.serverLoader)(this.app);
+            this.app.use(`/${config_1.Env.SERVICE_NAME}`, this.routes());
+            this.app.get('/*', (_, res) => {
+                res.json({
+                    message: `welcome service ${config_1.Env.SERVICE_NAME}`
+                });
             });
+            this.app.use(handlerError);
+            this.listen(Number(config_1.Env.PORT));
         });
-        this.app.use(handlerError);
-        this.listen(Number(config_1.Env.PORT));
     }
     routes() {
         return new routers_1.AuthRouter(this.context).getRouter();
@@ -52,5 +65,7 @@ class Server {
         });
     }
 }
-// eslint-disable-next-line no-new
-new Server();
+void (() => __awaiter(void 0, void 0, void 0, function* () {
+    // const server = new Server()
+    // await server.start()
+}))();

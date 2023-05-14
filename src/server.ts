@@ -22,7 +22,7 @@ const handlerError = (err: IError, _: Request, res: Response, __: any) => {
 class Server {
   public app: express.Application = express()
 
-  readonly context: IContext = {
+  private readonly context: IContext = {
     mongoDb: {
       instance: platformDb
     },
@@ -31,14 +31,14 @@ class Server {
     }
   }
 
-  constructor() {
-    void serverLoader(this.app)
+  async start() {
+    await serverLoader(this.app)
 
     this.app.use(`/${Env.SERVICE_NAME}`, this.routes())
 
     this.app.get('/*', (_: Request, res: Response) => {
       res.json({
-        message: `welcome ${Env.SERVICE_NAME} service`
+        message: `welcome service ${Env.SERVICE_NAME}`
       })
     })
 
@@ -60,5 +60,7 @@ class Server {
   }
 }
 
-// eslint-disable-next-line no-new
-new Server()
+void (async () => {
+  // const server = new Server()
+  // await server.start()
+})()

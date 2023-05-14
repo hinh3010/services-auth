@@ -1,5 +1,4 @@
 import { SimpleFalcon } from '@hellocacbantre/redis'
-import Bluebird from 'bluebird'
 import compression from 'compression'
 import connectRedis, { type Client } from 'connect-redis'
 import cookieParser from 'cookie-parser'
@@ -18,9 +17,6 @@ import { redisClient } from './connections/redisio.db'
 import { restResponseTimeHistogram } from './utils/metrics'
 
 const RedisStore = connectRedis(session)
-async function connectDb(): Promise<void> {
-  await Bluebird.all([import('./connections/mongo.db'), import('./connections/redisio.db')])
-}
 
 export async function serverLoader(app: express.Application): Promise<void> {
   app.use(
@@ -101,6 +97,4 @@ export async function serverLoader(app: express.Application): Promise<void> {
 
   // passport
   app.use(passport.initialize())
-
-  await connectDb()
 }
