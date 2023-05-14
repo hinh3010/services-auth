@@ -65,7 +65,7 @@ class Server {
         });
     }
 }
-void (() => __awaiter(void 0, void 0, void 0, function* () {
-    const server = new Server();
-    yield server.start();
-}))();
+// void (async () => {
+//   const server = new Server()
+//   await server.start()
+// })()

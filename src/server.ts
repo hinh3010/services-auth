@@ -60,7 +60,7 @@ class Server {
   }
 }
 
-void (async () => {
-  const server = new Server()
-  await server.start()
-})()
+// void (async () => {
+//   const server = new Server()
+//   await server.start()
+// })()
